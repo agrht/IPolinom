@@ -1,0 +1,235 @@
+#pragma once
+#include<iostream>
+using namespace std;
+
+template <class T>
+struct TNode
+{
+	T val;
+	TNode<T> *pNext;
+};
+
+template <class T>
+class TList {
+protected:
+	TNode<T> *pFirst;
+	TNode<T> *pLast;
+	TNode<T> *pCurr;
+	TNode<T> *pPrev;
+	TNode<T> *pStop;
+	int pos, size;
+public:
+	TList();
+	~TList();
+	T GetCurrEl();
+	void InsFirst(const T& a);
+	void DelFirst();
+	void InsLast(const T& a);
+	void InsCurr(const T &a);
+	void DelCurr();
+	void Reset();
+	void GoNext();
+	bool IsEnd();
+	void InsInOrder(const T &a);
+};
+
+template <class T>
+TList<T>::TList()
+{
+	pFirst = NULL;
+	pLast = NULL;
+	pCurr = NULL;
+	pPrev = NULL;
+	pStop = NULL;
+	size = 0;
+	pos = -1;
+}
+
+template <class T>
+TList<T>::~TList()
+{
+	TNode<T> *tmp = pFirst;
+	while (pFirst != pStop)
+	{
+		pFirst = pFirst->pNext;
+		delete tmp;
+		tmp = pFirst;
+	}
+}
+
+template <class T>
+T TList<T>::GetCurrEl()
+{
+	if (pCurr == NULL)
+	{
+		throw 0;
+	}
+	return pCurr->val;
+}
+
+template <class T>
+void TList<T>::InsFirst(const T& a)
+{
+	TNode<T> *tmp;
+	tmp = new TNode<T>;
+	tmp->pNext = pFirst;
+	tmp->val = a;
+	if (pFirst == pStop)
+	{
+		pLast = pFirst = tmp;
+	}
+	else
+	{
+		pFirst = tmp;
+	}
+	size++;
+}
+
+template <class T>
+void TList<T>::DelFirst()
+{
+	if (pFirst == pStop)
+	{
+		throw 11;
+	}
+	TNode<T> *tmp = pFirst;
+	pFirst = pFirst->pNext;
+	pCurr = pFirst;
+	delete tmp;
+	size--;
+}
+
+template <class T>
+void TList<T>::InsLast(const T& a)
+{
+	TNode<T> *tmp;
+	tmp = new TNode<T>;
+	tmp->pNext = pStop;
+	tmp->val = a;
+	if (pLast != pStop)
+	{
+		pLast->pNext = tmp;
+		pLast = tmp;
+	}
+	else
+	{
+		pFirst = pLast = tmp;
+	}
+	size++;
+}
+
+
+template <class T>
+void TList<T>::InsCurr(const T &a)
+{
+	if (pCurr == pFirst)
+	{
+		InsFirst(a);
+	}
+	if (pCurr == pStop)
+		throw 55;
+	else 
+	{
+		TNode<T> *tmp = new TNode<T>;
+		tmp->val = a;
+		pPrev->pNext = tmp;
+		tmp->pNext = pCurr;
+		pCurr = tmp;
+		size++;
+	}
+}
+
+template <class T>
+void TList<T>::DelCurr()
+{
+	if (pCurr == pStop)
+		throw 7;
+	if (pCurr == pFirst)
+	{
+		DelFirst();
+	}
+	else
+	{
+		TNode<T> *tmp = pCurr;
+		pPrev->pNext = pCurr->pNext;
+		pCurr = pCurr->pNext;
+		delete tmp;
+		size--;
+	}
+}
+
+template <class T>
+void TList<T>::Reset()
+{
+	pCurr = pFirst;
+	pPrev = pStop;
+	pos = 0;
+}
+
+template <class T>
+void TList<T>::GoNext()
+{
+	pPrev = pCurr;
+	pCurr = pCurr->pNext;
+	pos++;
+}
+
+template <class T>
+bool TList<T>::IsEnd()
+{
+	return pCurr == pStop;
+}
+
+template <class T>
+void TList<T>::InsInOrder(const T &el)
+{
+	if (pFirst == pStop||el>pFirst->val)
+		InsFirst(el);
+	else if (pLast->val > el)
+		InsLast(el);
+	else
+	{
+		for (Reset(); !IsEnd(); GoNext())
+		{
+			if (el > pCurr->val)
+			{
+				InsCurr(el);
+				break;
+			}
+		}
+	}
+}
+
+
+template <class T>
+class THeadList :public TList<T>
+{
+protected:
+	TNode<T> *pHead;
+	TNode<T> *pStop;
+	TNode<T> *pFirst;
+public:
+	THeadList() :TList<T>()
+	{
+		pHead = new TNode<T>;
+		pStop = pHead;
+		pHead->pNext = pHead;		
+	}
+
+	~THeadList()
+	{
+		delete pHead;
+	}
+
+	void InsFirst(T val)
+	{
+		TList<T>::InsFirst(val);
+		pHead->pNext = pFirst;
+	}
+
+	void DelFirst()
+	{
+		TList::DelFirst();
+		pHead->pNext = pFirst;
+	}
+};
