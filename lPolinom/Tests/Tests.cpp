@@ -1,6 +1,6 @@
 #include "gtest1.h"
-#include"C:\Users\ru052\source\repos\lPolinom\lPolinom\Polinom.h"
-#include"C:\Users\ru052\source\repos\lPolinom\lPolinom\TList.h"
+#include"..\lPolinom\lPolinom\Polinom.h"
+#include"..\lPolinom\lPolinom\TList.h"
 
 TEST(THeadList, can_create_list)
 {
